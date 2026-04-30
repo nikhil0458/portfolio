@@ -2,14 +2,12 @@
   "hero": {
     "name": "Nikhileswar Jonnadula",
     "roles": [
-      "Power BI Developer",
-      "Data Analyst",
-      "Business Analyst"
+      "Technical Artist"
     ],
-    "desc": "Microsoft-Certified Data Analyst at TCS with 3+ years of experience in Power BI, SQL, and Advanced Excel. I specialize in transforming raw data into actionable insights that support strategic growth and process improvement.",
-    "statYears": "3+",
-    "statProjects": "20+",
-    "statClients": "12+",
+    "desc": "Technical Artist | Pipeline & Tools Developer  Web & App Developer | Python Automation  \n\nBridging creativity and code to build production-ready systems.",
+    "statYears": "5+",
+    "statProjects": "35+",
+    "statClients": "23+",
     "heroImage": "",
     "aboutImage": ""
   },
