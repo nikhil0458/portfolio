@@ -561,6 +561,20 @@ async function saveEdu() {
 
 // PROJECTS
 function renderProjectsAdmin() {
+  if (!data.projects) data.projects = [];
+  if (data.projects.length === 0) {
+    data.projects.push({
+      emoji: '🚀',
+      title: 'New Project',
+      tags: ['Tag'],
+      category: 'Other',
+      desc: 'Short project summary',
+      content: '<h1>Project Title</h1><h2>Overview</h2><p>Write a full project blog here...</p>',
+      link: '#',
+      image: ''
+    });
+  }
+
   document.getElementById('projectsList').innerHTML = (data.projects || []).map((p, i) => {
     const safeEmoji = escapeHtml(p.emoji || '');
     const safeTitle = escapeHtml(p.title || '');
