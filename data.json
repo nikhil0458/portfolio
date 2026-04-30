@@ -48,34 +48,9 @@
   ],
   "services": [
     {
-      "icon": "📊",
-      "title": "Data Analysis",
-      "desc": "Unlock trends & patterns using advanced querying and modelling to extract actionable business insights."
-    },
-    {
-      "icon": "📈",
-      "title": "Power BI Development",
-      "desc": "Design and develop dynamic Power BI dashboards for CXOs, Operations & Finance teams."
-    },
-    {
-      "icon": "🧠",
-      "title": "Business Analytics",
-      "desc": "Translate complex business questions into data-backed answers that drive strategic decisions."
-    },
-    {
-      "icon": "🗄️",
-      "title": "SQL & DAX Mastery",
-      "desc": "Create optimized queries and calculated fields for maximum performance and accuracy."
-    },
-    {
-      "icon": "🎯",
-      "title": "KPI & Metric Reporting",
-      "desc": "Help stakeholders track what matters in real-time with clear and compelling visualizations."
-    },
-    {
-      "icon": "💰",
-      "title": "Financial & Risk Analysis",
-      "desc": "Analyze financial and risk trends for banking and fin-tech clients with precision."
+      "icon": "✨",
+      "title": "Web Development",
+      "desc": "Web development is the process of building, creating, and maintaining websites and web applications. It ranges from developing simple single static pages of plain text to complex web applications, electronic businesses, and social network services"
     }
   ],
   "experience": [
