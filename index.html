@@ -238,6 +238,25 @@
   <div class="footer-copy">Made with <span>♥</span> in India</div>
 </footer>
 
+<!-- PROJECT POPUP -->
+<div class="project-popup-overlay" id="projectPopupOverlay" onclick="handleProjectOverlayClick(event)">
+  <div class="project-popup">
+    <button class="project-popup-close" onclick="closeProjectPopup()">✕</button>
+    <div class="project-popup-scroll" id="projectPopupScroll">
+      <div class="project-popup-cover" id="projectPopupCover"></div>
+      <div class="project-popup-article">
+        <h2 class="project-popup-title" id="projectPopupTitle"></h2>
+        <div class="project-popup-meta">
+          <span class="project-popup-category" id="projectPopupCategory"></span>
+          <div class="project-popup-tags" id="projectPopupTags"></div>
+        </div>
+        <div class="project-popup-content" id="projectPopupContent"></div>
+      </div>
+    </div>
+    <a class="project-popup-float-btn" id="projectPopupLink" href="#" target="_blank" rel="noopener noreferrer">View Live Project →</a>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 

@@ -388,7 +388,14 @@ section { padding: 7rem 5%; position: relative; }
   font-size: 0.7rem; font-family: var(--font-display); font-weight: 500; color: var(--accent);
 }
 .project-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
-.project-desc { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+.project-desc {
+  font-size: 0.85rem; color: var(--text2); line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .project-link {
   display: inline-flex; align-items: center; gap: 0.4rem;
   margin-top: 1rem; font-family: var(--font-display); font-size: 0.8rem;
