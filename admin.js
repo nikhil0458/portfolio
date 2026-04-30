@@ -1,9 +1,10 @@
-// ========== ADMIN.JS ==========
+﻿// ========== ADMIN.JS ==========
 // GitHub API-based admin panel for portfolio management
 
 const GITHUB_API = 'https://api.github.com';
 let githubToken = '';
 let githubRepo = '';  // "owner/repo"
+let defaultBranch = 'main'; // auto-detected from repo
 let data = {};
 let dataSHA = '';      // SHA of data.json for updates
 let pendingImages = {}; // { hero: File, about: File, project: File }
@@ -42,23 +43,25 @@ function handleLogin() {
   })
   .then(repoData => {
     if (!repoData.permissions || !repoData.permissions.push) {
-      throw new Error('Token does not have write access to this repo');
+      throw new Error('Token does not have write access to this repo. Make sure your token has "Contents: Read and write" permission.');
     }
 
-    // Auth success
+    // Auth success â€” store default branch
     githubToken = token;
     githubRepo = repo;
+    defaultBranch = repoData.default_branch || 'main';
     sessionStorage.setItem('gh_token', token);
     sessionStorage.setItem('gh_repo', repo);
+    sessionStorage.setItem('gh_branch', defaultBranch);
 
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('adminApp').style.display = 'flex';
-    document.getElementById('repoBadge').textContent = repo;
+    document.getElementById('repoBadge').textContent = `${repo} (${defaultBranch})`;
 
     loadDataFromRepo();
   })
   .catch(err => {
-    errorEl.textContent = '❌ ' + err.message;
+    errorEl.textContent = 'âŒ ' + err.message;
     btnText.style.display = '';
     spinner.style.display = 'none';
   });
@@ -79,12 +82,14 @@ function handleLogout() {
 (function checkSession() {
   const token = sessionStorage.getItem('gh_token');
   const repo = sessionStorage.getItem('gh_repo');
+  const branch = sessionStorage.getItem('gh_branch');
   if (token && repo) {
     githubToken = token;
     githubRepo = repo;
+    defaultBranch = branch || 'main';
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('adminApp').style.display = 'flex';
-    document.getElementById('repoBadge').textContent = repo;
+    document.getElementById('repoBadge').textContent = `${repo} (${defaultBranch})`;
     loadDataFromRepo();
   }
 })();
@@ -124,9 +129,10 @@ async function getFileFromRepo(path) {
 async function putFileToRepo(path, content, message, sha = null) {
   const body = {
     message: message,
-    content: btoa(unescape(encodeURIComponent(content))),
-    branch: 'main'
+    content: btoa(unescape(encodeURIComponent(content)))
   };
+  // Only include branch if we know it
+  if (defaultBranch) body.branch = defaultBranch;
   if (sha) body.sha = sha;
 
   const resp = await fetch(`${GITHUB_API}/repos/${githubRepo}/contents/${path}`, {
@@ -136,15 +142,9 @@ async function putFileToRepo(path, content, message, sha = null) {
   });
 
   if (!resp.ok) {
-    // Try 'master' branch if 'main' fails
-    body.branch = 'master';
-    const resp2 = await fetch(`${GITHUB_API}/repos/${githubRepo}/contents/${path}`, {
-      method: 'PUT',
-      headers: githubHeaders(),
-      body: JSON.stringify(body)
-    });
-    if (!resp2.ok) throw new Error(`Failed to save ${path}: ${resp2.status}`);
-    return resp2.json();
+    const errBody = await resp.json().catch(() => ({}));
+    const errMsg = errBody.message || resp.statusText;
+    throw new Error(`Failed to save ${path}: ${resp.status} â€” ${errMsg}`);
   }
   return resp.json();
 }
@@ -159,9 +159,9 @@ async function putBinaryFileToRepo(path, base64Content, message) {
 
   const body = {
     message: message,
-    content: base64Content,
-    branch: 'main'
+    content: base64Content
   };
+  if (defaultBranch) body.branch = defaultBranch;
   if (sha) body.sha = sha;
 
   const resp = await fetch(`${GITHUB_API}/repos/${githubRepo}/contents/${path}`, {
@@ -171,14 +171,9 @@ async function putBinaryFileToRepo(path, base64Content, message) {
   });
 
   if (!resp.ok) {
-    body.branch = 'master';
-    const resp2 = await fetch(`${GITHUB_API}/repos/${githubRepo}/contents/${path}`, {
-      method: 'PUT',
-      headers: githubHeaders(),
-      body: JSON.stringify(body)
-    });
-    if (!resp2.ok) throw new Error(`Failed to upload ${path}: ${resp2.status}`);
-    return resp2.json();
+    const errBody = await resp.json().catch(() => ({}));
+    const errMsg = errBody.message || resp.statusText;
+    throw new Error(`Failed to upload ${path}: ${resp.status} â€” ${errMsg}`);
   }
   return resp.json();
 }
@@ -192,17 +187,17 @@ async function loadDataFromRepo() {
       const content = decodeURIComponent(escape(atob(file.content.replace(/\n/g, ''))));
       data = JSON.parse(content);
     } else {
-      // No data.json yet — use defaults
+      // No data.json yet â€” use defaults
       data = getDefaultData();
       dataSHA = '';
     }
     populateAdmin();
-    showToast('✅ Data loaded from repository', 'success');
+    showToast('âœ… Data loaded from repository', 'success');
   } catch (e) {
     console.error('Error loading data:', e);
     data = getDefaultData();
     populateAdmin();
-    showToast('⚠ Could not load data.json — using defaults', 'error');
+    showToast('âš  Could not load data.json â€” using defaults', 'error');
   }
 }
 
@@ -229,12 +224,12 @@ async function saveDataToRepo() {
     const existing = await getFileFromRepo('data.json');
     if (existing) dataSHA = existing.sha;
 
-    const result = await putFileToRepo('data.json', content, '📝 Update portfolio data via admin panel', dataSHA || undefined);
+    const result = await putFileToRepo('data.json', content, 'ðŸ“ Update portfolio data via admin panel', dataSHA || undefined);
     dataSHA = result.content.sha;
     return true;
   } catch (e) {
     console.error('Save error:', e);
-    showToast('❌ Failed to save: ' + e.message, 'error');
+    showToast('âŒ Failed to save: ' + e.message, 'error');
     return false;
   }
 }
@@ -255,17 +250,17 @@ function handleImageSelect(type, input) {
     }
   };
   reader.readAsDataURL(file);
-  showToast(`📁 ${file.name} selected — click Upload to save`);
+  showToast(`ðŸ“ ${file.name} selected â€” click Upload to save`);
 }
 
 async function uploadImage(type) {
   const file = pendingImages[type];
   if (!file) {
-    showToast('⚠ Please select a file first', 'error');
+    showToast('âš  Please select a file first', 'error');
     return;
   }
 
-  showToast('⬆ Uploading image...', 'success');
+  showToast('â¬† Uploading image...', 'success');
 
   try {
     const base64 = await fileToBase64(file);
@@ -281,10 +276,10 @@ async function uploadImage(type) {
       path = `images/project_${timestamp}.${ext}`;
     }
 
-    await putBinaryFileToRepo(path, base64, `🖼 Upload ${type} image via admin`);
+    await putBinaryFileToRepo(path, base64, `ðŸ–¼ Upload ${type} image via admin`);
 
     // Build raw URL
-    const rawUrl = `https://raw.githubusercontent.com/${githubRepo}/main/${path}`;
+    const rawUrl = `https://raw.githubusercontent.com/${githubRepo}/${defaultBranch}/${path}`;
 
     if (type === 'hero') {
       data.hero.heroImage = rawUrl;
@@ -301,11 +296,11 @@ async function uploadImage(type) {
 
     await saveDataToRepo();
     delete pendingImages[type];
-    showToast('✅ Image uploaded & saved!', 'success');
+    showToast('âœ… Image uploaded & saved!', 'success');
   } catch (e) {
     console.error('Upload error:', e);
     // Try master branch URL
-    showToast('❌ Upload failed: ' + e.message, 'error');
+    showToast('âŒ Upload failed: ' + e.message, 'error');
   }
 }
 
@@ -315,19 +310,19 @@ function setImageUrl(type) {
     if (!url) return;
     data.hero.heroImage = url;
     document.getElementById('heroImagePreview').innerHTML = `<img src="${url}" alt="Hero">`;
-    saveDataToRepo().then(() => showToast('✅ Hero image URL saved!', 'success'));
+    saveDataToRepo().then(() => showToast('âœ… Hero image URL saved!', 'success'));
   } else if (type === 'about') {
     const url = document.getElementById('aboutImageUrl').value.trim();
     if (!url) return;
     data.hero.aboutImage = url;
     document.getElementById('aboutImagePreview').innerHTML = `<img src="${url}" alt="About">`;
-    saveDataToRepo().then(() => showToast('✅ About image URL saved!', 'success'));
+    saveDataToRepo().then(() => showToast('âœ… About image URL saved!', 'success'));
   } else if (type === 'project') {
     const url = document.getElementById('projectImageUrl').value.trim();
     const idx = document.getElementById('projectImageTarget').value;
     if (!url || idx === '') return;
     data.projects[idx].image = url;
-    saveDataToRepo().then(() => showToast('✅ Project image URL saved!', 'success'));
+    saveDataToRepo().then(() => showToast('âœ… Project image URL saved!', 'success'));
   }
 }
 
@@ -341,6 +336,42 @@ function fileToBase64(file) {
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+}
+
+function escapeHtml(value) {
+  const str = value == null ? '' : String(value);
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function sanitizeRichContent(rawHtml) {
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = rawHtml || '';
+
+  wrapper.querySelectorAll('script,iframe,object,embed').forEach(el => el.remove());
+  wrapper.querySelectorAll('*').forEach(el => {
+    [...el.attributes].forEach(attr => {
+      const name = attr.name.toLowerCase();
+      const value = attr.value || '';
+      if (name.startsWith('on')) {
+        el.removeAttribute(attr.name);
+      }
+      if ((name === 'href' || name === 'src') && /^\s*javascript:/i.test(value)) {
+        el.removeAttribute(attr.name);
+      }
+    });
+
+    if (el.tagName.toLowerCase() === 'a') {
+      el.setAttribute('target', '_blank');
+      el.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+
+  return wrapper.innerHTML;
 }
 
 // ========== ADMIN NAVIGATION ==========
@@ -421,7 +452,7 @@ async function saveHero() {
     statProjects: document.getElementById('aStatProjects').value,
     statClients: document.getElementById('aStatClients').value
   };
-  if (await saveDataToRepo()) showToast('✅ Hero section saved!', 'success');
+  if (await saveDataToRepo()) showToast('âœ… Hero section saved!', 'success');
 }
 
 async function saveAbout() {
@@ -430,7 +461,7 @@ async function saveAbout() {
     desc1: document.getElementById('aAboutDesc1').value,
     desc2: document.getElementById('aAboutDesc2').value
   };
-  if (await saveDataToRepo()) showToast('✅ About section saved!', 'success');
+  if (await saveDataToRepo()) showToast('âœ… About section saved!', 'success');
 }
 
 // SKILLS
@@ -442,7 +473,7 @@ function renderSkillsAdmin() {
         <div class="aci-sub">${s.pct}%</div>
       </div>
       <input type="range" min="0" max="100" value="${s.pct}" style="flex:1;accent-color:var(--accent)" oninput="data.skills[${i}].pct=+this.value;this.parentElement.querySelector('.aci-sub').textContent=this.value+'%'">
-      <button class="aci-del" onclick="data.skills.splice(${i},1);renderSkillsAdmin()">✕</button>
+      <button class="aci-del" onclick="data.skills.splice(${i},1);renderSkillsAdmin()">âœ•</button>
     </div>
   `).join('');
 }
@@ -454,7 +485,7 @@ function addSkill() {
   renderSkillsAdmin();
 }
 async function saveSkills() {
-  if (await saveDataToRepo()) showToast('✅ Skills saved!', 'success');
+  if (await saveDataToRepo()) showToast('âœ… Skills saved!', 'success');
 }
 
 // SERVICES
@@ -463,7 +494,7 @@ function renderServicesAdmin() {
     <div class="admin-card-item" style="flex-direction:column;align-items:stretch">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
         <div class="aci-title">${s.icon} ${s.title}</div>
-        <button class="aci-del" onclick="data.services.splice(${i},1);renderServicesAdmin()">✕</button>
+        <button class="aci-del" onclick="data.services.splice(${i},1);renderServicesAdmin()">âœ•</button>
       </div>
       <input class="admin-input" value="${s.icon}" placeholder="Emoji" oninput="data.services[${i}].icon=this.value">
       <input class="admin-input" style="margin-top:0.4rem" value="${s.title}" placeholder="Title" oninput="data.services[${i}].title=this.value">
@@ -473,11 +504,11 @@ function renderServicesAdmin() {
 }
 function addService() {
   if (!data.services) data.services = [];
-  data.services.push({ icon: '✨', title: 'New Service', desc: 'Service description' });
+  data.services.push({ icon: 'âœ¨', title: 'New Service', desc: 'Service description' });
   renderServicesAdmin();
 }
 async function saveServices() {
-  if (await saveDataToRepo()) showToast('✅ Services saved!', 'success');
+  if (await saveDataToRepo()) showToast('âœ… Services saved!', 'success');
 }
 
 // EXPERIENCE
@@ -486,7 +517,7 @@ function renderExpAdmin() {
     <div class="admin-card-item" style="flex-direction:column;align-items:stretch">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
         <div class="aci-title">${e.role}</div>
-        <button class="aci-del" onclick="data.experience.splice(${i},1);renderExpAdmin()">✕</button>
+        <button class="aci-del" onclick="data.experience.splice(${i},1);renderExpAdmin()">âœ•</button>
       </div>
       <input class="admin-input" placeholder="Date" value="${e.date}" oninput="data.experience[${i}].date=this.value">
       <input class="admin-input" style="margin-top:0.4rem" placeholder="Role" value="${e.role}" oninput="data.experience[${i}].role=this.value">
@@ -497,11 +528,11 @@ function renderExpAdmin() {
 }
 function addExp() {
   if (!data.experience) data.experience = [];
-  data.experience.unshift({ date: 'Year – Year', role: 'Job Title', company: 'Company', desc: 'Description' });
+  data.experience.unshift({ date: 'Year â€“ Year', role: 'Job Title', company: 'Company', desc: 'Description' });
   renderExpAdmin();
 }
 async function saveExp() {
-  if (await saveDataToRepo()) showToast('✅ Experience saved!', 'success');
+  if (await saveDataToRepo()) showToast('âœ… Experience saved!', 'success');
 }
 
 // EDUCATION
@@ -510,7 +541,7 @@ function renderEduAdmin() {
     <div class="admin-card-item" style="flex-direction:column;align-items:stretch">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
         <div class="aci-title">${e.degree}</div>
-        <button class="aci-del" onclick="data.education.splice(${i},1);renderEduAdmin()">✕</button>
+        <button class="aci-del" onclick="data.education.splice(${i},1);renderEduAdmin()">âœ•</button>
       </div>
       <input class="admin-input" placeholder="Date" value="${e.date}" oninput="data.education[${i}].date=this.value">
       <input class="admin-input" style="margin-top:0.4rem" placeholder="Degree" value="${e.degree}" oninput="data.education[${i}].degree=this.value">
@@ -521,37 +552,144 @@ function renderEduAdmin() {
 }
 function addEdu() {
   if (!data.education) data.education = [];
-  data.education.unshift({ date: 'Year – Year', degree: 'Degree Name', school: 'School Name', grade: '0.0' });
+  data.education.unshift({ date: 'Year â€“ Year', degree: 'Degree Name', school: 'School Name', grade: '0.0' });
   renderEduAdmin();
 }
 async function saveEdu() {
-  if (await saveDataToRepo()) showToast('✅ Education saved!', 'success');
+  if (await saveDataToRepo()) showToast('âœ… Education saved!', 'success');
 }
 
 // PROJECTS
 function renderProjectsAdmin() {
-  document.getElementById('projectsList').innerHTML = (data.projects || []).map((p, i) => `
-    <div class="admin-card-item" style="flex-direction:column;align-items:stretch">
+  document.getElementById('projectsList').innerHTML = (data.projects || []).map((p, i) => {
+    const safeEmoji = escapeHtml(p.emoji || '');
+    const safeTitle = escapeHtml(p.title || '');
+    const safeTags = escapeHtml((p.tags || []).join(', '));
+    const safeCategory = escapeHtml(p.category || '');
+    const safeDesc = escapeHtml(p.desc || '');
+    const safeLink = escapeHtml(p.link || '');
+    const safeImage = escapeHtml(p.image || '');
+    const starter = `<p>${safeDesc || 'Write a detailed blog for this project...'}</p>`;
+    const normalizedContent = (p.content || '').trim() || starter;
+    data.projects[i].content = sanitizeRichContent(normalizedContent);
+    const richContent = data.projects[i].content;
+
+    return `
+    <div class="admin-card-item project-admin-card" style="flex-direction:column;align-items:stretch">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
-        <div class="aci-title">${p.emoji} ${p.title}</div>
+        <div class="aci-title">${safeEmoji} ${safeTitle || 'Untitled Project'}</div>
         <button class="aci-del" onclick="data.projects.splice(${i},1);renderProjectsAdmin()">✕</button>
       </div>
-      <input class="admin-input" placeholder="Emoji" value="${p.emoji}" oninput="data.projects[${i}].emoji=this.value">
-      <input class="admin-input" style="margin-top:0.4rem" placeholder="Title" value="${p.title}" oninput="data.projects[${i}].title=this.value">
-      <input class="admin-input" style="margin-top:0.4rem" placeholder="Tags (comma separated)" value="${(p.tags || []).join(', ')}" oninput="data.projects[${i}].tags=this.value.split(',').map(s=>s.trim())">
-      <input class="admin-input" style="margin-top:0.4rem" placeholder="Category" value="${p.category}" oninput="data.projects[${i}].category=this.value">
-      <textarea class="admin-textarea" style="margin-top:0.4rem;min-height:60px" oninput="data.projects[${i}].desc=this.value">${p.desc}</textarea>
-      <input class="admin-input" style="margin-top:0.4rem" placeholder="Link URL" value="${p.link}" oninput="data.projects[${i}].link=this.value">
-      <input class="admin-input" style="margin-top:0.4rem" placeholder="Image URL (optional)" value="${p.image || ''}" oninput="data.projects[${i}].image=this.value">
+      <input class="admin-input" placeholder="Emoji" value="${safeEmoji}" oninput="data.projects[${i}].emoji=this.value">
+      <input class="admin-input" style="margin-top:0.4rem" placeholder="Title" value="${safeTitle}" oninput="data.projects[${i}].title=this.value">
+      <input class="admin-input" style="margin-top:0.4rem" placeholder="Tags (comma separated)" value="${safeTags}" oninput="data.projects[${i}].tags=this.value.split(',').map(s=>s.trim()).filter(Boolean)">
+      <input class="admin-input" style="margin-top:0.4rem" placeholder="Category" value="${safeCategory}" oninput="data.projects[${i}].category=this.value">
+      <textarea class="admin-textarea" style="margin-top:0.4rem;min-height:60px" placeholder="Short card summary (shown in portfolio grid)" oninput="data.projects[${i}].desc=this.value">${safeDesc}</textarea>
+      <input class="admin-input" style="margin-top:0.4rem" placeholder="Link URL (used for floating View Project button)" value="${safeLink}" oninput="data.projects[${i}].link=this.value">
+      <input class="admin-input" style="margin-top:0.4rem" placeholder="Image URL (optional)" value="${safeImage}" oninput="data.projects[${i}].image=this.value">
+
+      <div class="project-blog-panel">
+        <div class="project-blog-toolbar">
+          <select class="admin-input project-format-select" onchange="setProjectBlockFormat(${i}, this.value)">
+            <option value="p">Paragraph</option>
+            <option value="h1">Title H1</option>
+            <option value="h2">Heading H2</option>
+            <option value="h3">Heading H3</option>
+            <option value="h4">Heading H4</option>
+            <option value="h5">Heading H5</option>
+            <option value="h6">Heading H6</option>
+          </select>
+          <button class="project-tool-btn" type="button" onmousedown="event.preventDefault()" onclick="projectExecCommand(${i}, 'bold')"><strong>B</strong></button>
+          <button class="project-tool-btn" type="button" onmousedown="event.preventDefault()" onclick="projectExecCommand(${i}, 'italic')"><em>I</em></button>
+          <button class="project-tool-btn" type="button" onmousedown="event.preventDefault()" onclick="projectExecCommand(${i}, 'underline')"><u>U</u></button>
+          <button class="project-tool-btn" type="button" onmousedown="event.preventDefault()" onclick="addProjectHyperlink(${i})">Link</button>
+          <button class="project-tool-btn" type="button" onmousedown="event.preventDefault()" onclick="document.getElementById('projectBlogImageFile_${i}').click()">Image</button>
+          <input type="file" id="projectBlogImageFile_${i}" accept="image/*" style="display:none" onchange="uploadProjectBlogImage(${i}, this)">
+        </div>
+        <div class="project-blog-editor" id="projectBlogEditor_${i}" contenteditable="true" oninput="syncProjectBlogContent(${i})">${richContent}</div>
+      </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
+
+function getProjectEditor(index) {
+  return document.getElementById(`projectBlogEditor_${index}`);
+}
+
+function syncProjectBlogContent(index) {
+  const editor = getProjectEditor(index);
+  if (!editor || !data.projects[index]) return;
+  data.projects[index].content = sanitizeRichContent(editor.innerHTML.trim());
+}
+
+function focusProjectEditor(index) {
+  const editor = getProjectEditor(index);
+  if (!editor) return false;
+  editor.focus();
+  return true;
+}
+
+function projectExecCommand(index, command, value = null) {
+  if (!focusProjectEditor(index)) return;
+  document.execCommand(command, false, value);
+  syncProjectBlogContent(index);
+}
+
+function setProjectBlockFormat(index, tagName) {
+  if (!tagName || !focusProjectEditor(index)) return;
+  document.execCommand('formatBlock', false, `<${tagName}>`);
+  syncProjectBlogContent(index);
+}
+
+function addProjectHyperlink(index) {
+  const url = prompt('Enter URL for hyperlink (https://...)');
+  if (!url) return;
+  projectExecCommand(index, 'createLink', url.trim());
+}
+
+async function uploadProjectBlogImage(index, inputEl) {
+  const file = inputEl && inputEl.files ? inputEl.files[0] : null;
+  if (!file) return;
+
+  try {
+    showToast('⬆ Uploading blog image...', 'success');
+    const base64 = await fileToBase64(file);
+    const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+    const path = `images/project_blog_${index}_${Date.now()}.${ext}`;
+    await putBinaryFileToRepo(path, base64, `🖼 Upload project blog image for #${index + 1}`);
+    const rawUrl = `https://raw.githubusercontent.com/${githubRepo}/${defaultBranch}/${path}`;
+
+    focusProjectEditor(index);
+    document.execCommand('insertImage', false, rawUrl);
+    syncProjectBlogContent(index);
+    inputEl.value = '';
+    showToast('✅ Blog image uploaded and inserted', 'success');
+  } catch (e) {
+    console.error('Project blog image upload error:', e);
+    showToast('❌ Blog image upload failed: ' + e.message, 'error');
+  }
+}
+
 function addProject() {
   if (!data.projects) data.projects = [];
-  data.projects.push({ emoji: '🚀', title: 'New Project', tags: ['Tag'], category: 'Other', desc: 'Project description', link: '#', image: '' });
+  data.projects.push({
+    emoji: '🚀',
+    title: 'New Project',
+    tags: ['Tag'],
+    category: 'Other',
+    desc: 'Short project summary',
+    content: '<h1>Project Title</h1><h2>Overview</h2><p>Write a full project blog here...</p>',
+    link: '#',
+    image: ''
+  });
   renderProjectsAdmin();
 }
+
 async function saveProjects() {
+  (data.projects || []).forEach(project => {
+    project.content = sanitizeRichContent(project.content || '');
+  });
   if (await saveDataToRepo()) showToast('✅ Projects saved!', 'success');
 }
 
@@ -561,7 +699,7 @@ function renderCertsAdmin() {
     <div class="admin-card-item" style="flex-direction:column;align-items:stretch">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
         <div class="aci-title">${c.icon} ${c.title}</div>
-        <button class="aci-del" onclick="data.certs.splice(${i},1);renderCertsAdmin()">✕</button>
+        <button class="aci-del" onclick="data.certs.splice(${i},1);renderCertsAdmin()">âœ•</button>
       </div>
       <input class="admin-input" placeholder="Emoji" value="${c.icon}" oninput="data.certs[${i}].icon=this.value">
       <input class="admin-input" style="margin-top:0.4rem" placeholder="Title" value="${c.title}" oninput="data.certs[${i}].title=this.value">
@@ -573,11 +711,11 @@ function renderCertsAdmin() {
 }
 function addCert() {
   if (!data.certs) data.certs = [];
-  data.certs.push({ icon: '🏅', title: 'New Certificate', org: 'Issuer', tag: 'Field', link: '#' });
+  data.certs.push({ icon: 'ðŸ…', title: 'New Certificate', org: 'Issuer', tag: 'Field', link: '#' });
   renderCertsAdmin();
 }
 async function saveCerts() {
-  if (await saveDataToRepo()) showToast('✅ Certifications saved!', 'success');
+  if (await saveDataToRepo()) showToast('âœ… Certifications saved!', 'success');
 }
 
 // CONTACT
@@ -589,7 +727,7 @@ async function saveContact() {
     linkedin: document.getElementById('aLinkedin').value,
     github: document.getElementById('aGithub').value
   };
-  if (await saveDataToRepo()) showToast('✅ Contact details saved!', 'success');
+  if (await saveDataToRepo()) showToast('âœ… Contact details saved!', 'success');
 }
 
 // ========== TOAST ==========
@@ -599,3 +737,4 @@ function showToast(msg, type = '') {
   t.className = 'toast show' + (type ? ' ' + type : '');
   setTimeout(() => { t.className = 'toast'; }, 3500);
 }
+

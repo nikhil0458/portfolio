@@ -2,6 +2,7 @@
 // Public-facing site logic: fetches data.json, renders all sections
 
 let data = {};
+let activeProjectIndex = null;
 
 // ========== LOAD DATA FROM JSON ==========
 async function loadData() {
@@ -116,23 +117,116 @@ function renderPortfolio(filter = 'all') {
     <button class="filter-btn ${filter === 'all' ? 'active' : ''}" onclick="filterProjects('all', this)">All Projects</button>
     ${cats.map(c => `<button class="filter-btn ${filter === c ? 'active' : ''}" onclick="filterProjects('${c}', this)">${c}</button>`).join('')}
   `;
-  const filtered = filter === 'all' ? data.projects : data.projects.filter(p => p.category === filter);
+  const indexedProjects = data.projects.map((project, idx) => ({ ...project, __index: idx }));
+  const filtered = filter === 'all' ? indexedProjects : indexedProjects.filter(p => p.category === filter);
   document.getElementById('portfolioGrid').innerHTML = filtered.map(p => {
     const thumbContent = (p.image && p.image.trim() !== '')
       ? `<img src="${p.image}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;">`
       : p.emoji;
     return `
-    <div class="project-card fade-up">
+    <div class="project-card fade-up" onclick="openProjectPopupByIndex(${p.__index})">
       <div class="project-thumb">${thumbContent}</div>
       <div class="project-body">
         <div class="project-tags">${p.tags.map(t => `<span class="project-tag">${t}</span>`).join('')}</div>
         <div class="project-title">${p.title}</div>
         <div class="project-desc">${p.desc}</div>
-        <a href="${p.link}" class="project-link" target="_blank">View Project →</a>
+        <a href="#" class="project-link" onclick="event.preventDefault();event.stopPropagation();openProjectPopupByIndex(${p.__index})">Read Details -></a>
       </div>
     </div>
   `}).join('');
   observeFadeUp();
+}
+
+function sanitizeProjectHtml(rawHtml) {
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = rawHtml || '';
+
+  wrapper.querySelectorAll('script,iframe,object,embed').forEach(el => el.remove());
+  wrapper.querySelectorAll('*').forEach(el => {
+    const tag = el.tagName.toLowerCase();
+    [...el.attributes].forEach(attr => {
+      const name = attr.name.toLowerCase();
+      const value = attr.value || '';
+      if (name.startsWith('on') || name === 'style') {
+        el.removeAttribute(attr.name);
+      }
+      if ((name === 'src' || name === 'href') && /^\s*javascript:/i.test(value)) {
+        el.removeAttribute(attr.name);
+      }
+    });
+
+    if (tag === 'a') {
+      el.setAttribute('target', '_blank');
+      el.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+
+  return wrapper.innerHTML;
+}
+
+function escapePlainText(value) {
+  const str = value == null ? '' : String(value);
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getProjectBlogContent(project) {
+  const richContent = (project.content || '').trim();
+  if (richContent) return sanitizeProjectHtml(richContent);
+  const fallback = (project.desc || '').trim();
+  return fallback ? `<p>${escapePlainText(fallback)}</p>` : '<p>No project content available yet.</p>';
+}
+
+function openProjectPopupByIndex(index) {
+  if (!Array.isArray(data.projects) || !data.projects[index]) return;
+
+  activeProjectIndex = index;
+  const project = data.projects[index];
+  const overlay = document.getElementById('projectPopupOverlay');
+  const cover = document.getElementById('projectPopupCover');
+  const title = document.getElementById('projectPopupTitle');
+  const category = document.getElementById('projectPopupCategory');
+  const tags = document.getElementById('projectPopupTags');
+  const content = document.getElementById('projectPopupContent');
+  const link = document.getElementById('projectPopupLink');
+  const scroll = document.getElementById('projectPopupScroll');
+
+  title.textContent = project.title || 'Project Details';
+  category.textContent = project.category || 'Project';
+  tags.innerHTML = (project.tags || []).map(tag => `<span class="project-tag">${tag}</span>`).join('');
+  content.innerHTML = getProjectBlogContent(project);
+
+  if (project.image && project.image.trim() !== '') {
+    cover.innerHTML = `<img src="${project.image}" alt="${project.title || 'Project image'}">`;
+  } else {
+    cover.innerHTML = `<div class="project-popup-cover-emoji">${project.emoji || '🚀'}</div>`;
+  }
+
+  const hasLink = !!(project.link && project.link.trim() && project.link.trim() !== '#');
+  link.href = hasLink ? project.link : '#';
+  link.classList.toggle('disabled', !hasLink);
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  scroll.scrollTop = 0;
+}
+
+function closeProjectPopup() {
+  const overlay = document.getElementById('projectPopupOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  activeProjectIndex = null;
+}
+
+function handleProjectOverlayClick(event) {
+  if (event.target && event.target.id === 'projectPopupOverlay') {
+    closeProjectPopup();
+  }
 }
 
 function renderCerts() {
@@ -257,6 +351,12 @@ document.getElementById('hamburger').addEventListener('click', () => {
   nav.style.display = nav.style.display === 'block' ? 'none' : 'block';
 });
 function closeMobileNav() { document.getElementById('mobileNav').style.display = 'none'; }
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && activeProjectIndex !== null) {
+    closeProjectPopup();
+  }
+});
 
 // ========== INIT ==========
 (async function init() {

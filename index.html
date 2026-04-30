@@ -241,6 +241,25 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- PROJECT BLOG POPUP -->
+<div class="project-popup-overlay" id="projectPopupOverlay" onclick="handleProjectOverlayClick(event)">
+  <div class="project-popup" role="dialog" aria-modal="true" aria-labelledby="projectPopupTitle">
+    <button class="project-popup-close" type="button" onclick="closeProjectPopup()" aria-label="Close project details">X</button>
+    <div class="project-popup-scroll" id="projectPopupScroll">
+      <div class="project-popup-cover" id="projectPopupCover"></div>
+      <article class="project-popup-article" id="projectPopupArticle">
+        <h1 class="project-popup-title" id="projectPopupTitle"></h1>
+        <div class="project-popup-meta">
+          <span class="project-popup-category" id="projectPopupCategory"></span>
+          <div class="project-popup-tags" id="projectPopupTags"></div>
+        </div>
+        <div class="project-popup-content" id="projectPopupContent"></div>
+      </article>
+    </div>
+    <a class="project-popup-float-btn" id="projectPopupLink" href="#" target="_blank" rel="noopener noreferrer">View Project</a>
+  </div>
+</div>
+
 <script src="app.js"></script>
 </body>
 </html>
