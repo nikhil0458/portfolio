@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — Nagendra Vallepu</title>
+<meta name="description" content="Nagendra Vallepu — Microsoft-Certified Data Analyst specializing in Power BI, SQL, and data visualization.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAVIGATION -->
+<nav id="mainNav">
+  <div class="nav-logo" id="navLogo">Portfolio.</div>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#resume">Resume</a></li>
+    <li><a href="#portfolio">Work</a></li>
+    <li><a href="#certifications">Certs</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <ul>
+    <li><a href="#home" onclick="closeMobileNav()">Home</a></li>
+    <li><a href="#services" onclick="closeMobileNav()">Services</a></li>
+    <li><a href="#about" onclick="closeMobileNav()">About</a></li>
+    <li><a href="#resume" onclick="closeMobileNav()">Resume</a></li>
+    <li><a href="#portfolio" onclick="closeMobileNav()">Work</a></li>
+    <li><a href="#certifications" onclick="closeMobileNav()">Certifications</a></li>
+    <li><a href="#contact" onclick="closeMobileNav()">Contact</a></li>
+  </ul>
+</div>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-orb orb1"></div>
+  <div class="hero-orb orb2"></div>
+  <div class="hero-left">
+    <div class="hero-eyebrow fade-up" id="heroEyebrow">Available for Hire</div>
+    <h1 class="hero-name fade-up">
+      <span>Hello, I'm</span>
+      <span class="gradient-text" id="heroName">Your Name</span>
+    </h1>
+    <div class="hero-roles fade-up">
+      <span id="heroRole" class="typewriter"></span>
+    </div>
+    <p class="hero-desc fade-up" id="heroDesc"></p>
+    <div class="hero-ctas fade-up">
+      <a href="#portfolio" class="btn-primary">View My Work →</a>
+      <a href="#contact" class="btn-outline">Get in Touch</a>
+    </div>
+    <div class="hero-stats fade-up">
+      <div class="stat-item">
+        <div class="stat-num" id="statYears">3+</div>
+        <div class="stat-label">Years Exp.</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="statProjects">20+</div>
+        <div class="stat-label">Projects</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="statClients">15+</div>
+        <div class="stat-label">Clients</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-img-frame">
+      <div class="hero-img-placeholder" id="heroImageContainer">
+        <span id="heroEmoji">👤</span>
+        <span>Upload Photo</span>
+      </div>
+    </div>
+    <div class="hero-float-card card1">
+      <div class="float-icon">🏆</div>
+      <div>
+        <div class="float-title">Award Winning</div>
+        <div class="float-sub">Best Developer 2024</div>
+      </div>
+    </div>
+    <div class="hero-float-card card2">
+      <div class="float-icon">⭐</div>
+      <div>
+        <div class="float-title" id="statProjects2">20+ Projects</div>
+        <div class="float-sub">Delivered On Time</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-label">What I Offer</div>
+  <h2 class="section-title fade-up">Services I Provide</h2>
+  <p class="section-desc fade-up" id="servicesSubtitle">Delivering end-to-end solutions tailored to your needs.</p>
+  <div class="services-grid" id="servicesGrid"></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-visual fade-up">
+    <div class="about-img-bg" id="aboutImageContainer">
+      <span style="font-size:5rem">👤</span>
+      <div class="about-badge">
+        <div class="badge-num" id="badgeYears">3+</div>
+        <div class="badge-text">Years of<br>Experience</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-content">
+    <div class="section-label">About Me</div>
+    <h2 class="section-title fade-up" id="aboutTitle"></h2>
+    <p class="fade-up" style="color:var(--text2);line-height:1.8;margin-bottom:1rem" id="aboutDesc1"></p>
+    <p class="fade-up" style="color:var(--text2);line-height:1.8;margin-bottom:1.5rem" id="aboutDesc2"></p>
+    <div class="skills-section fade-up" id="skillsContainer"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESUME -->
+<section id="resume">
+  <div class="section-label">My Journey</div>
+  <h2 class="section-title fade-up">Experience & Education</h2>
+  <div class="resume-tabs">
+    <button class="tab-btn active" onclick="switchTab('exp')">Work Experience</button>
+    <button class="tab-btn" onclick="switchTab('edu')">Education</button>
+  </div>
+  <div id="expTab" class="timeline"></div>
+  <div id="eduTab" class="timeline" style="display:none"></div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="section-label">Selected Work</div>
+  <h2 class="section-title fade-up">My Portfolio</h2>
+  <p class="section-desc fade-up">A curated selection of projects that showcase my skills and passion.</p>
+  <div class="portfolio-filters" id="portfolioFilters">
+    <button class="filter-btn active" onclick="filterProjects('all', this)">All Projects</button>
+  </div>
+  <div class="portfolio-grid" id="portfolioGrid"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <div class="section-label">Credentials</div>
+  <h2 class="section-title fade-up">Certifications</h2>
+  <div class="certs-grid" id="certsGrid"></div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-info">
+    <div class="section-label">Let's Talk</div>
+    <h2 class="section-title fade-up" id="contactTitle">Ready to Build Something <span class="gradient-text">Amazing?</span></h2>
+    <p class="fade-up" style="color:var(--text2);line-height:1.8;margin-bottom:2.5rem" id="contactDesc">Have a project in mind or want to collaborate? I'd love to hear from you. Let's create something extraordinary together.</p>
+    <div class="contact-item fade-up">
+      <div class="contact-icon">📧</div>
+      <div>
+        <div class="contact-label">Email</div>
+        <div class="contact-value" id="contactEmail">hello@yourname.com</div>
+      </div>
+    </div>
+    <div class="contact-item fade-up">
+      <div class="contact-icon">📞</div>
+      <div>
+        <div class="contact-label">Phone</div>
+        <div class="contact-value" id="contactPhone">+91 000-000-0000</div>
+      </div>
+    </div>
+    <div class="contact-item fade-up">
+      <div class="contact-icon">📍</div>
+      <div>
+        <div class="contact-label">Location</div>
+        <div class="contact-value" id="contactLocation">Hyderabad, India</div>
+      </div>
+    </div>
+    <div class="social-links fade-up" id="socialLinks">
+      <a href="#" class="social-link" title="LinkedIn">in</a>
+      <a href="#" class="social-link" title="GitHub">gh</a>
+      <a href="#" class="social-link" title="Twitter">𝕏</a>
+    </div>
+  </div>
+  <div>
+    <div class="contact-form fade-up">
+      <h3 style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;margin-bottom:1.5rem">Send a Message</h3>
+      <div class="admin-grid-2">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-input" type="text" placeholder="John">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input class="form-input" type="text" placeholder="Doe">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" placeholder="john@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subject</label>
+        <input class="form-input" type="text" placeholder="Project Inquiry">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-textarea" placeholder="Tell me about your project..."></textarea>
+      </div>
+      <button class="btn-primary" style="width:100%;justify-content:center;border-radius:12px;" onclick="showToast('Message sent! I\'ll get back to you soon 🚀')">Send Message →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© 2025 <span id="footerName">Your Name</span>. All rights reserved.</div>
+  <div class="footer-copy">Made with <span>♥</span> in India</div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

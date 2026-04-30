@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Portfolio</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">⚙</div>
+    <h1 class="login-title">Portfolio Admin</h1>
+    <p class="login-subtitle">Authenticate with your GitHub token to manage your portfolio</p>
+    
+    <div class="login-field">
+      <label class="login-label">GitHub Repository</label>
+      <input class="login-input" id="loginRepo" type="text" placeholder="username/repo-name" autocomplete="off">
+      <span class="login-hint">e.g. pojitha/portfolio</span>
+    </div>
+    
+    <div class="login-field">
+      <label class="login-label">GitHub Personal Access Token</label>
+      <div class="login-password-wrap">
+        <input class="login-input" id="loginToken" type="password" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+        <button class="login-eye" id="togglePassword" type="button">👁</button>
+      </div>
+      <span class="login-hint">Create at GitHub → Settings → Developer Settings → Personal Access Tokens (needs <code>repo</code> scope)</span>
+    </div>
+    
+    <div class="login-error" id="loginError"></div>
+    
+    <button class="login-btn" id="loginBtn" onclick="handleLogin()">
+      <span id="loginBtnText">🔐 Authenticate & Enter</span>
+      <span id="loginSpinner" class="spinner" style="display:none"></span>
+    </button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-app" id="adminApp" style="display:none">
+  
+  <!-- TOP BAR -->
+  <div class="admin-topbar">
+    <div class="admin-topbar-left">
+      <div class="admin-logo">⚙ Portfolio Admin</div>
+      <span class="admin-repo-badge" id="repoBadge"></span>
+    </div>
+    <div class="admin-topbar-right">
+      <a href="index.html" class="admin-view-site" target="_blank">🌐 View Site</a>
+      <button class="admin-logout" onclick="handleLogout()">🚪 Logout</button>
+    </div>
+  </div>
+  
+  <!-- BODY -->
+  <div class="admin-layout">
+    
+    <!-- SIDEBAR -->
+    <div class="admin-sidebar">
+      <div class="admin-nav-item active" onclick="adminNav('hero', this)">🏠 Hero</div>
+      <div class="admin-nav-item" onclick="adminNav('about', this)">👤 About</div>
+      <div class="admin-nav-item" onclick="adminNav('skills', this)">📊 Skills</div>
+      <div class="admin-nav-item" onclick="adminNav('services', this)">🛠 Services</div>
+      <div class="admin-nav-item" onclick="adminNav('experience', this)">💼 Experience</div>
+      <div class="admin-nav-item" onclick="adminNav('education', this)">🎓 Education</div>
+      <div class="admin-nav-item" onclick="adminNav('projects', this)">🗂 Projects</div>
+      <div class="admin-nav-item" onclick="adminNav('certs', this)">🏅 Certs</div>
+      <div class="admin-nav-item" onclick="adminNav('contact', this)">📬 Contact</div>
+      <div class="admin-nav-item" onclick="adminNav('images', this)">🖼 Images</div>
+    </div>
+    
+    <!-- CONTENT -->
+    <div class="admin-content">
+
+      <!-- HERO SECTION -->
+      <div class="admin-section active" id="admin-hero">
+        <h3>Hero Section</h3>
+        <div class="admin-field">
+          <label class="admin-label">Full Name</label>
+          <input class="admin-input" id="aHeroName" placeholder="Your Name">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Roles (comma separated)</label>
+          <input class="admin-input" id="aHeroRoles" placeholder="Developer, Designer, Analyst">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Description</label>
+          <textarea class="admin-textarea" id="aHeroDesc"></textarea>
+        </div>
+        <div class="admin-grid-2">
+          <div class="admin-field">
+            <label class="admin-label">Years Experience</label>
+            <input class="admin-input" id="aStatYears" placeholder="3+">
+          </div>
+          <div class="admin-field">
+            <label class="admin-label">Projects Count</label>
+            <input class="admin-input" id="aStatProjects" placeholder="20+">
+          </div>
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Clients Count</label>
+          <input class="admin-input" id="aStatClients" placeholder="15+">
+        </div>
+        <button class="admin-save-btn" onclick="saveHero()">💾 Save Hero Section</button>
+      </div>
+
+      <!-- ABOUT SECTION -->
+      <div class="admin-section" id="admin-about">
+        <h3>About Section</h3>
+        <div class="admin-field">
+          <label class="admin-label">Section Title</label>
+          <input class="admin-input" id="aAboutTitle" placeholder="Passionate About Building Meaningful Products">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Paragraph 1</label>
+          <textarea class="admin-textarea" id="aAboutDesc1"></textarea>
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Paragraph 2</label>
+          <textarea class="admin-textarea" id="aAboutDesc2"></textarea>
+        </div>
+        <button class="admin-save-btn" onclick="saveAbout()">💾 Save About Section</button>
+      </div>
+
+      <!-- SKILLS -->
+      <div class="admin-section" id="admin-skills">
+        <h3>Technical Skills</h3>
+        <div class="admin-card-list" id="skillsList"></div>
+        <button class="add-btn" onclick="addSkill()">+ Add Skill</button>
+        <button class="admin-save-btn" onclick="saveSkills()">💾 Save Skills</button>
+      </div>
+
+      <!-- SERVICES -->
+      <div class="admin-section" id="admin-services">
+        <h3>Services</h3>
+        <div class="admin-card-list" id="servicesList"></div>
+        <button class="add-btn" onclick="addService()">+ Add Service</button>
+        <button class="admin-save-btn" onclick="saveServices()">💾 Save Services</button>
+      </div>
+
+      <!-- EXPERIENCE -->
+      <div class="admin-section" id="admin-experience">
+        <h3>Work Experience</h3>
+        <div class="admin-card-list" id="expList"></div>
+        <button class="add-btn" onclick="addExp()">+ Add Experience</button>
+        <button class="admin-save-btn" onclick="saveExp()">💾 Save Experience</button>
+      </div>
+
+      <!-- EDUCATION -->
+      <div class="admin-section" id="admin-education">
+        <h3>Education</h3>
+        <div class="admin-card-list" id="eduList"></div>
+        <button class="add-btn" onclick="addEdu()">+ Add Education</button>
+        <button class="admin-save-btn" onclick="saveEdu()">💾 Save Education</button>
+      </div>
+
+      <!-- PROJECTS -->
+      <div class="admin-section" id="admin-projects">
+        <h3>Portfolio Projects</h3>
+        <div class="admin-card-list" id="projectsList"></div>
+        <button class="add-btn" onclick="addProject()">+ Add Project</button>
+        <button class="admin-save-btn" onclick="saveProjects()">💾 Save Projects</button>
+      </div>
+
+      <!-- CERTIFICATIONS -->
+      <div class="admin-section" id="admin-certs">
+        <h3>Certifications</h3>
+        <div class="admin-card-list" id="certsList"></div>
+        <button class="add-btn" onclick="addCert()">+ Add Certification</button>
+        <button class="admin-save-btn" onclick="saveCerts()">💾 Save Certifications</button>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="admin-section" id="admin-contact">
+        <h3>Contact Details</h3>
+        <div class="admin-field">
+          <label class="admin-label">Email</label>
+          <input class="admin-input" id="aEmail" placeholder="hello@yourname.com">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Phone</label>
+          <input class="admin-input" id="aPhone" placeholder="+91 000-000-0000">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Location</label>
+          <input class="admin-input" id="aLocation" placeholder="Hyderabad, India">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">LinkedIn URL</label>
+          <input class="admin-input" id="aLinkedin" placeholder="https://linkedin.com/in/...">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">GitHub URL</label>
+          <input class="admin-input" id="aGithub" placeholder="https://github.com/...">
+        </div>
+        <button class="admin-save-btn" onclick="saveContact()">💾 Save Contact Details</button>
+      </div>
+
+      <!-- IMAGES -->
+      <div class="admin-section" id="admin-images">
+        <h3>Image Management</h3>
+        <p style="color:var(--text2);margin-bottom:1.5rem;font-size:0.9rem;line-height:1.7">
+          Upload images to your GitHub repo. They will be stored in the <code>images/</code> folder and the URLs will be used in your portfolio.
+        </p>
+        
+        <div class="image-upload-section">
+          <h4 style="font-family:var(--font-display);font-size:0.95rem;font-weight:700;margin-bottom:1rem">Hero Photo</h4>
+          <div class="image-preview" id="heroImagePreview">
+            <span>No image set</span>
+          </div>
+          <div class="image-upload-controls">
+            <input type="file" id="heroImageFile" accept="image/*" style="display:none" onchange="handleImageSelect('hero', this)">
+            <button class="add-btn" onclick="document.getElementById('heroImageFile').click()">📁 Choose File</button>
+            <button class="add-btn" onclick="uploadImage('hero')">⬆ Upload to GitHub</button>
+            <input class="admin-input" id="heroImageUrl" placeholder="Or paste image URL directly..." style="margin-top:0.5rem">
+            <button class="add-btn" style="margin-top:0.5rem" onclick="setImageUrl('hero')">🔗 Use URL</button>
+          </div>
+        </div>
+
+        <div class="image-upload-section" style="margin-top:2rem">
+          <h4 style="font-family:var(--font-display);font-size:0.95rem;font-weight:700;margin-bottom:1rem">About Photo</h4>
+          <div class="image-preview" id="aboutImagePreview">
+            <span>No image set</span>
+          </div>
+          <div class="image-upload-controls">
+            <input type="file" id="aboutImageFile" accept="image/*" style="display:none" onchange="handleImageSelect('about', this)">
+            <button class="add-btn" onclick="document.getElementById('aboutImageFile').click()">📁 Choose File</button>
+            <button class="add-btn" onclick="uploadImage('about')">⬆ Upload to GitHub</button>
+            <input class="admin-input" id="aboutImageUrl" placeholder="Or paste image URL directly..." style="margin-top:0.5rem">
+            <button class="add-btn" style="margin-top:0.5rem" onclick="setImageUrl('about')">🔗 Use URL</button>
+          </div>
+        </div>
+
+        <div class="image-upload-section" style="margin-top:2rem">
+          <h4 style="font-family:var(--font-display);font-size:0.95rem;font-weight:700;margin-bottom:1rem">Project Thumbnails</h4>
+          <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1rem">Upload project images and assign them to projects</p>
+          <input type="file" id="projectImageFile" accept="image/*" style="display:none" onchange="handleImageSelect('project', this)">
+          <button class="add-btn" onclick="document.getElementById('projectImageFile').click()">📁 Choose Project Image</button>
+          <div class="admin-field" style="margin-top:0.75rem">
+            <label class="admin-label">Select Project</label>
+            <select class="admin-input" id="projectImageTarget"></select>
+          </div>
+          <button class="add-btn" onclick="uploadImage('project')">⬆ Upload & Assign to Project</button>
+          <div style="margin-top:1rem">
+            <input class="admin-input" id="projectImageUrl" placeholder="Or paste image URL directly...">
+            <button class="add-btn" style="margin-top:0.5rem" onclick="setImageUrl('project')">🔗 Use URL for Project</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="admin.js"></script>
+</body>
+</html>
