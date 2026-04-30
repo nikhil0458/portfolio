@@ -23,27 +23,27 @@
     },
     {
       "name": "Python",
-      "pct": 60
+      "pct": 97
     },
     {
       "name": "HTML",
-      "pct": 80
+      "pct": 100
     },
     {
       "name": "CSS",
-      "pct": 80
+      "pct": 100
     },
     {
       "name": "Java Script",
-      "pct": 80
+      "pct": 97
     },
     {
       "name": "React JS",
-      "pct": 80
+      "pct": 95
     },
     {
       "name": "Next JS",
-      "pct": 80
+      "pct": 97
     }
   ],
   "services": [
