@@ -18,24 +18,32 @@
   },
   "skills": [
     {
-      "name": "Power BI",
-      "pct": 90
-    },
-    {
       "name": "SQL",
       "pct": 95
-    },
-    {
-      "name": "Excel",
-      "pct": 90
     },
     {
       "name": "Python",
       "pct": 60
     },
     {
-      "name": "Tableau",
-      "pct": 75
+      "name": "HTML",
+      "pct": 80
+    },
+    {
+      "name": "CSS",
+      "pct": 80
+    },
+    {
+      "name": "Java Script",
+      "pct": 80
+    },
+    {
+      "name": "React JS",
+      "pct": 80
+    },
+    {
+      "name": "Next JS",
+      "pct": 80
     }
   ],
   "services": [
