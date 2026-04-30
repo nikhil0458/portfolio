@@ -1,7 +1,11 @@
 {
   "hero": {
-    "name": "Nagendra Vallepu",
-    "roles": ["Power BI Developer", "Data Analyst", "Business Analyst"],
+    "name": "Nikhileswar Jonnadula",
+    "roles": [
+      "Power BI Developer",
+      "Data Analyst",
+      "Business Analyst"
+    ],
     "desc": "Microsoft-Certified Data Analyst at TCS with 3+ years of experience in Power BI, SQL, and Advanced Excel. I specialize in transforming raw data into actionable insights that support strategic growth and process improvement.",
     "statYears": "3+",
     "statProjects": "20+",
@@ -15,44 +19,210 @@
     "desc2": "My journey in data analytics began with a passion for problem-solving and a knack for uncovering trends hidden in datasets. I partner with stakeholders to translate business requirements into technical specifications and actionable insights."
   },
   "skills": [
-    { "name": "Power BI", "pct": 90 },
-    { "name": "SQL", "pct": 95 },
-    { "name": "Excel", "pct": 90 },
-    { "name": "Python", "pct": 60 },
-    { "name": "Tableau", "pct": 75 }
+    {
+      "name": "Power BI",
+      "pct": 90
+    },
+    {
+      "name": "SQL",
+      "pct": 95
+    },
+    {
+      "name": "Excel",
+      "pct": 90
+    },
+    {
+      "name": "Python",
+      "pct": 60
+    },
+    {
+      "name": "Tableau",
+      "pct": 75
+    }
   ],
   "services": [
-    { "icon": "📊", "title": "Data Analysis", "desc": "Unlock trends & patterns using advanced querying and modelling to extract actionable business insights." },
-    { "icon": "📈", "title": "Power BI Development", "desc": "Design and develop dynamic Power BI dashboards for CXOs, Operations & Finance teams." },
-    { "icon": "🧠", "title": "Business Analytics", "desc": "Translate complex business questions into data-backed answers that drive strategic decisions." },
-    { "icon": "🗄️", "title": "SQL & DAX Mastery", "desc": "Create optimized queries and calculated fields for maximum performance and accuracy." },
-    { "icon": "🎯", "title": "KPI & Metric Reporting", "desc": "Help stakeholders track what matters in real-time with clear and compelling visualizations." },
-    { "icon": "💰", "title": "Financial & Risk Analysis", "desc": "Analyze financial and risk trends for banking and fin-tech clients with precision." }
+    {
+      "icon": "📊",
+      "title": "Data Analysis",
+      "desc": "Unlock trends & patterns using advanced querying and modelling to extract actionable business insights."
+    },
+    {
+      "icon": "📈",
+      "title": "Power BI Development",
+      "desc": "Design and develop dynamic Power BI dashboards for CXOs, Operations & Finance teams."
+    },
+    {
+      "icon": "🧠",
+      "title": "Business Analytics",
+      "desc": "Translate complex business questions into data-backed answers that drive strategic decisions."
+    },
+    {
+      "icon": "🗄️",
+      "title": "SQL & DAX Mastery",
+      "desc": "Create optimized queries and calculated fields for maximum performance and accuracy."
+    },
+    {
+      "icon": "🎯",
+      "title": "KPI & Metric Reporting",
+      "desc": "Help stakeholders track what matters in real-time with clear and compelling visualizations."
+    },
+    {
+      "icon": "💰",
+      "title": "Financial & Risk Analysis",
+      "desc": "Analyze financial and risk trends for banking and fin-tech clients with precision."
+    }
   ],
   "experience": [
-    { "date": "Oct 2023 – Present", "role": "System Engineer – Digital Cadre", "company": "Tata Consultancy Services, Bengaluru", "desc": "Built and deployed interactive Power BI dashboards and real-time Splunk monitoring systems to enhance operational efficiency and facilitate data-driven decision-making." },
-    { "date": "Feb 2022 – Oct 2023", "role": "System Engineer", "company": "Tata Consultancy Services, Bengaluru", "desc": "Analyzed large datasets using SQL and Excel to extract actionable insights, enabling strategic decision-making for cross-functional business teams." },
-    { "date": "Jan 2020 – Apr 2020", "role": "Research Intern", "company": "Innopolis University, Kazan, Russia", "desc": "Contributed to the design and development of Autonomous VTOL Aircraft. Applied machine learning techniques using Python and R." }
+    {
+      "date": "Oct 2023 – Present",
+      "role": "System Engineer – Digital Cadre",
+      "company": "Tata Consultancy Services, Bengaluru",
+      "desc": "Built and deployed interactive Power BI dashboards and real-time Splunk monitoring systems to enhance operational efficiency and facilitate data-driven decision-making."
+    },
+    {
+      "date": "Feb 2022 – Oct 2023",
+      "role": "System Engineer",
+      "company": "Tata Consultancy Services, Bengaluru",
+      "desc": "Analyzed large datasets using SQL and Excel to extract actionable insights, enabling strategic decision-making for cross-functional business teams."
+    },
+    {
+      "date": "Jan 2020 – Apr 2020",
+      "role": "Research Intern",
+      "company": "Innopolis University, Kazan, Russia",
+      "desc": "Contributed to the design and development of Autonomous VTOL Aircraft. Applied machine learning techniques using Python and R."
+    }
   ],
   "education": [
-    { "date": "2017 – 2020", "degree": "B.Tech – Mechanical Engineering", "school": "Madanapalle Institute of Technology & Science", "grade": "8.0/10" },
-    { "date": "2014 – 2017", "degree": "Diploma in Mechanical Engineering", "school": "Vikas Polytechnic College", "grade": "82%" }
+    {
+      "date": "2017 – 2020",
+      "degree": "B.Tech – Mechanical Engineering",
+      "school": "Madanapalle Institute of Technology & Science",
+      "grade": "8.0/10"
+    },
+    {
+      "date": "2014 – 2017",
+      "degree": "Diploma in Mechanical Engineering",
+      "school": "Vikas Polytechnic College",
+      "grade": "82%"
+    }
   ],
   "projects": [
-    { "title": "OTT Merger Analysis", "tags": ["Power BI", "SQL", "Figma"], "desc": "Comprehensive OTT merger analysis between LioCinema and Jotstar covering subscriber behavior, content dynamics, and platform health.", "emoji": "📺", "link": "#", "category": "Power BI", "image": "" },
-    { "title": "India's EV Market Analysis", "tags": ["Power BI", "SQL"], "desc": "Comprehensive analysis of key market metrics, regional insights, manufacturer performance, seasonal trends, and future projections.", "emoji": "⚡", "link": "#", "category": "Power BI", "image": "" },
-    { "title": "Business Insights 360", "tags": ["Power BI", "DAX", "Excel"], "desc": "Analytics solution across Finance, Sales, Marketing, and Supply Chain with optimized DAX queries and dynamic visualizations.", "emoji": "🔮", "link": "#", "category": "Power BI", "image": "" },
-    { "title": "Finance & Supply Chain Analytics", "tags": ["MySQL"], "desc": "MySQL-based analysis of sales performance, market dynamics, customer behavior, and supply chain forecasting.", "emoji": "🏭", "link": "#", "category": "SQL", "image": "" },
-    { "title": "HR Analytics Dashboard", "tags": ["Tableau", "SQL"], "desc": "HR analytics dashboard tracking employee attrition, satisfaction ratings, and workforce demographics.", "emoji": "👥", "link": "#", "category": "Tableau", "image": "" },
-    { "title": "Sales & Finance Analysis", "tags": ["Excel"], "desc": "Comprehensive Excel-based analysis of AtliQ Hardware sales and financial performance across regions.", "emoji": "📉", "link": "#", "category": "Excel", "image": "" }
+    {
+      "title": "OTT Merger Analysis",
+      "tags": [
+        "Power BI",
+        "SQL",
+        "Figma"
+      ],
+      "desc": "Comprehensive OTT merger analysis between LioCinema and Jotstar covering subscriber behavior, content dynamics, and platform health.",
+      "emoji": "📺",
+      "link": "#",
+      "category": "Power BI",
+      "image": ""
+    },
+    {
+      "title": "India's EV Market Analysis",
+      "tags": [
+        "Power BI",
+        "SQL"
+      ],
+      "desc": "Comprehensive analysis of key market metrics, regional insights, manufacturer performance, seasonal trends, and future projections.",
+      "emoji": "⚡",
+      "link": "#",
+      "category": "Power BI",
+      "image": ""
+    },
+    {
+      "title": "Business Insights 360",
+      "tags": [
+        "Power BI",
+        "DAX",
+        "Excel"
+      ],
+      "desc": "Analytics solution across Finance, Sales, Marketing, and Supply Chain with optimized DAX queries and dynamic visualizations.",
+      "emoji": "🔮",
+      "link": "#",
+      "category": "Power BI",
+      "image": ""
+    },
+    {
+      "title": "Finance & Supply Chain Analytics",
+      "tags": [
+        "MySQL"
+      ],
+      "desc": "MySQL-based analysis of sales performance, market dynamics, customer behavior, and supply chain forecasting.",
+      "emoji": "🏭",
+      "link": "#",
+      "category": "SQL",
+      "image": ""
+    },
+    {
+      "title": "HR Analytics Dashboard",
+      "tags": [
+        "Tableau",
+        "SQL"
+      ],
+      "desc": "HR analytics dashboard tracking employee attrition, satisfaction ratings, and workforce demographics.",
+      "emoji": "👥",
+      "link": "#",
+      "category": "Tableau",
+      "image": ""
+    },
+    {
+      "title": "Sales & Finance Analysis",
+      "tags": [
+        "Excel"
+      ],
+      "desc": "Comprehensive Excel-based analysis of AtliQ Hardware sales and financial performance across regions.",
+      "emoji": "📉",
+      "link": "#",
+      "category": "Excel",
+      "image": ""
+    }
   ],
   "certs": [
-    { "icon": "🏅", "title": "Microsoft Certified: Power BI Data Analyst", "org": "Microsoft", "tag": "Power BI", "link": "#" },
-    { "icon": "🥇", "title": "Winner – Codebasics Analytics Challenge", "org": "Codebasics", "tag": "Power BI | SQL | Figma", "link": "#" },
-    { "icon": "✅", "title": "SQL Intermediate Certification", "org": "HackerRank", "tag": "SQL", "link": "#" },
-    { "icon": "📜", "title": "Power BI Data Analytics", "org": "Codebasics", "tag": "Power BI", "link": "#" },
-    { "icon": "📜", "title": "SQL Beginner to Advanced", "org": "Codebasics", "tag": "MySQL", "link": "#" },
-    { "icon": "📗", "title": "Excel: Mother of Business Intelligence", "org": "Codebasics", "tag": "Excel", "link": "#" }
+    {
+      "icon": "🏅",
+      "title": "Microsoft Certified: Power BI Data Analyst",
+      "org": "Microsoft",
+      "tag": "Power BI",
+      "link": "#"
+    },
+    {
+      "icon": "🥇",
+      "title": "Winner – Codebasics Analytics Challenge",
+      "org": "Codebasics",
+      "tag": "Power BI | SQL | Figma",
+      "link": "#"
+    },
+    {
+      "icon": "✅",
+      "title": "SQL Intermediate Certification",
+      "org": "HackerRank",
+      "tag": "SQL",
+      "link": "#"
+    },
+    {
+      "icon": "📜",
+      "title": "Power BI Data Analytics",
+      "org": "Codebasics",
+      "tag": "Power BI",
+      "link": "#"
+    },
+    {
+      "icon": "📜",
+      "title": "SQL Beginner to Advanced",
+      "org": "Codebasics",
+      "tag": "MySQL",
+      "link": "#"
+    },
+    {
+      "icon": "📗",
+      "title": "Excel: Mother of Business Intelligence",
+      "org": "Codebasics",
+      "tag": "Excel",
+      "link": "#"
+    }
   ],
   "contact": {
     "email": "nagendra.vallepu77@gmail.com",
